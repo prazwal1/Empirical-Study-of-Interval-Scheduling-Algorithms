@@ -9,23 +9,18 @@ The coding task implements and empirically evaluates greedy heuristics and an ex
 - **Experiments**: Quality ratios (small n=8-20), greedy runtime (n=2^10 to 2^19), exhaustive runtime (n=10-20). Averaged over trials.
 - **Tools**: Python, NumPy, Matplotlib.
 
-This addresses theory questions like:
-- Part 1 Q3/Q4: Objective is max non-overlapping intervals; greedy strategies include EFT, EST, SD.
-- Part 2 Q1/Q5: EFT steps implemented; modularity aids implementation (separate files for generation, sorting, algorithms).
-- Part 3 Q2: SD counterexample evident in high-overlap results (fails to maximize).
-
 ## 2. Solution Quality Analysis
 **Coding Question Addressed**: Compare greedy strategies (EFT, EST, SD) against optimal for solution quality (ratio of selected intervals to optimal) across overlap regimes and n values.
 
 Experiments: For n=8 to 20 (step 2), 20 trials per point, compute average ratio (greedy count / optimal count).
 
 ### Key Findings
-- **EFT**: Always achieves ratio 1.0 across all α and n, confirming optimality (aligns with proof by contradiction in Part 3 Q1: Assume optimal has more jobs; contradict by showing greedy's early finish leaves room).
-- **EST and SD**: Heuristics (not always optimal, per Part 2 Q2/Q5). Performance degrades with higher n and overlap:
+- **EFT**: Always achieves ratio 1.0 across all α and n, confirming optimality. This aligns with proof by contradiction: assuming an optimal solution has more jobs leads to a contradiction by showing the greedy algorithm's early finish leaves room for additional jobs.
+- **EST and SD**: Heuristics that are not always optimal. Performance degrades with higher n and overlap:
   - High overlap (α=0.1): EST drops to ~0.7, SD to ~0.5. Dense conflicts punish poor choices (e.g., EST may select early-starting long jobs blocking others; SD prioritizes short jobs that block compatible longer ones).
   - Medium overlap (α=1.0): EST ~0.7-0.9, SD ~0.6. Moderate degradation.
   - Low overlap (α=5.0): All ~0.9-1.0, as sparsity reduces suboptimal impact.
-- Observation: EFT's finish-time priority is crucial (proven optimal). Heuristics approximate well in sparse scenarios but fail in dense ones, highlighting why they're heuristics (no correctness guarantee, per Part 2 Q2).
+- Observation: EFT's finish-time priority is crucial (proven optimal). Heuristics approximate well in sparse scenarios but fail in dense ones, highlighting why they're heuristics with no correctness guarantee.
 
 ### Plot: Solution Quality: Greedy vs Optimal
 ![Solution Quality: Greedy vs Optimal](plots/quality_comparison.png)
@@ -38,7 +33,7 @@ Experiments: For n=8 to 20 (step 2), 20 trials per point, compute average ratio 
 | 1.0 (Medium)| 1.0       | 0.963     | 0.258    | 1.0     |
 | 5.0 (Low)   | 1.0       | 1.0       | 0.179    | 1.0     |
 
-This validates Part 3 Q2 (SD counterexample: high-overlap case shows failure) and Part 2 Q3 (loop invariant in greedy: maintained non-overlap, proven via induction).
+These results validate that SD has counterexamples (high-overlap case shows failure) and demonstrate the maintained non-overlap loop invariant in the greedy algorithm, proven via induction.
 
 ## 3. Runtime Complexity Validation
 **Coding Question Addressed**: Empirically validate Big-O complexities for greedy (O(n log n)) and exhaustive (O(n 2^n)) across α, with normalization to confirm bounds.
@@ -50,7 +45,7 @@ Experiments: n=1024 to ~500k, 10 trials. Measures total time (sorting + selectio
   - Runtime scales as O(n log n): Log-log plot shows near-linear slope (slope ≈1 for n log n).
   - Normalized t(n)/(n log₂ n): Stabilizes at ~2.2-2.9 × 10^{-7} s (constant, confirming bound). Initial fluctuations due to overhead at small n.
   - α Impact: Low overlap (α=5.0) slightly faster (fewer comparisons); high overlap slower but same complexity.
-- Ties to Theory: Matches Mergesort's O(n log n) (Part 3 Q5: Mergesort worst-case O(n log n) time, O(n) space vs. Quicksort's O(n^2) worst-time but O(log n) space).
+- Ties to Theory: Matches Mergesort's O(n log n) worst-case time complexity and O(n) space, compared to Quicksort's O(n^2) worst-case time but O(log n) space.
 
 ### Plot: Greedy Runtime Validation
 ![Greedy Runtime Validation](plots/greedy_big_o.png)
@@ -70,7 +65,7 @@ Experiments: n=10-20, 5 trials.
   - Runtime O(n 2^n): vs n plot shows exponential growth (up to ~4s at n=20 for high overlap).
   - Normalized t(n)/(n 2^n): Decreases to ~1.6-2.4 × 10^{-7} s (trends toward constant but doesn't fully stabilize due to small n). High overlap (α=0.1) has lower constant (implicit early invalidations act as "pruning").
   - α Impact: High overlap faster in practice (more early conflicts skip computations), but worst-case still exponential.
-- Ties to Theory: Impractical for n>20 (e.g., n=20: ~1 million subsets, but n! for TSP in Part 3 Q3 is ~2.4 × 10^{18}, far worse). No explicit pruning, but discussion in README suggests backtracking could optimize average-case without changing worst-case (Part 3 Q3/Q4: Exhaustive impractical; induction preferred for correctness over trial-and-error).
+- Ties to Theory: Impractical for n>20 (e.g., n=20: ~1 million subsets, compared to n! for TSP which is ~2.4 × 10^{18} for n=20, far worse). No explicit pruning, but backtracking could optimize average-case without changing worst-case. Exhaustive search is impractical at scale; induction proofs are preferred for correctness over trial-and-error.
 
 ### Plot: Exhaustive Runtime Validation
 ![Exhaustive Runtime Validation](plots/exhaustive_big_o.png)
@@ -85,12 +80,12 @@ Experiments: n=10-20, 5 trials.
 
 ## 4. Discussion and Observations
 - **Overlap Impact (α)**: High overlap amplifies heuristic failures (quality) but slightly improves exhaustive runtime (implicit pruning). Low overlap makes all strategies near-optimal.
-- **Trade-offs**: Greedy efficient (scalable) but heuristics like EST/SD suboptimal (Part 1 Q5: Algorithm vs. heuristic). Exhaustive optimal but unscalable (NP-hard like TSP in Part 2 Q4).
+- **Trade-offs**: Greedy efficient (scalable) but heuristics like EST/SD can be suboptimal, distinguishing them from proven algorithms. Exhaustive is optimal but unscalable (NP-hard problem similar to TSP).
 - **Limitations**: Small n for exhaustive limits normalization; floating-point precision in intervals; no pruning in exhaustive.
 - **Improvements**: Use dynamic programming for optimal (O(n log n)) in quality tests; integer intervals; more α/trials.
-- **Relation to Theory**: Empirical results support proofs (EFT optimality via contradiction/induction, Part 2 Q3/Part 3 Q1/Q4). Failure of heuristics in counterexamples (Part 3 Q2) shows why trial-and-error insufficient.
+- **Relation to Theory**: Empirical results support theoretical proofs (EFT optimality via contradiction/induction). Failure of heuristics in counterexamples shows why trial-and-error is insufficient.
 
 ## 5. Conclusion
-The implementation confirms EFT's optimality and O(n log n) efficiency, while heuristics approximate variably based on overlap. Exhaustive validates optimality but highlights exponential impracticality. This empirical study complements theory, demonstrating criteria like correctness, efficiency, and simplicity (Part 1 Q1/Q2).
+The implementation confirms EFT's optimality and O(n log n) efficiency, while heuristics approximate variably based on overlap. Exhaustive validates optimality but highlights exponential impracticality. This empirical study complements theory, demonstrating criteria like correctness, efficiency, and simplicity.
 
 All plots saved in 'plots/' (quality_comparison.png, greedy_big_o.png, exhaustive_big_o.png). Code runs via `python main.py`.
