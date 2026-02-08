@@ -65,7 +65,7 @@ Experiments: n=10-20, 5 trials. For each configuration we record the mean and st
   - Runtime O(n 2^n): vs n plot shows exponential growth (up to ~4s at n=20 for high overlap).
   - Normalized t(n)/(n 2^n): Decreases to ~1.6-2.4 × 10^{-7} s (trends toward constant but doesn't fully stabilize due to small n). High overlap (α=0.1) has lower constant (implicit early invalidations act as "pruning").
   - α Impact: High overlap faster in practice (more early conflicts skip computations), but worst-case still exponential.
-- Ties to Theory: Impractical for n>20 (e.g., n=20: ~1 million subsets, compared to n! for TSP which is ~2.4 × 10^{18} for n=20, far worse). No explicit pruning, but backtracking could optimize average-case without changing worst-case. Exhaustive search is impractical at scale; induction proofs are preferred for correctness over trial-and-error.
+- Ties to Theory: Impractical for n>20 (e.g., n=20: ~1 million subsets, compared to n! for TSP which is ~2.4 × 10^{18} for n=20, far worse). No explicit pruning, but backtracking can significantly reduce runtime for small or typical n by eliminating branches that cannot lead to a better solution, so fewer states are explored in practice. However, in the worst case, no branches are pruned and the algorithm still examines all possible subsets (≈ 2ⁿ states). Therefore, pruning improves average-case performance but does not change the worst-case time complexity, which remains exponential and impractical at scale.
 
 ### Plot: Exhaustive Runtime Validation
 ![Exhaustive Runtime Validation](plots/exhaustive_big_o.png)
