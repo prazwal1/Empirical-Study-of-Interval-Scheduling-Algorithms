@@ -6,13 +6,13 @@ The coding task implements and empirically evaluates greedy heuristics and an ex
 - **Algorithms**:
   - Greedy: EFT (sort by finish, select non-overlapping), EST (sort by start), SD (sort by duration). All use merge sort (O(n log n)).
   - Exhaustive: Enumerates 2^n subsets, validates non-overlap (O(n log n) per subset), finds max size. No pruning, leading to O(n 2^n log n) worst-case.
-- **Experiments**: Quality ratios (small n=8-20), greedy runtime (n=2^10 to 2^19), exhaustive runtime (n=10-20). Averaged over trials.
+- **Experiments**: Quality ratios (small n=8-20), greedy runtime (n=2^10 to 2^19), exhaustive runtime (n=10-20). For each configuration we compute and report the mean and standard deviation over multiple trials.
 - **Tools**: Python, NumPy, Matplotlib.
 
 ## 2. Solution Quality Analysis
 **Coding Question Addressed**: Compare greedy strategies (EFT, EST, SD) against optimal for solution quality (ratio of selected intervals to optimal) across overlap regimes and n values.
 
-Experiments: For n=8 to 20 (step 2), 20 trials per point, compute average ratio (greedy count / optimal count).
+Experiments: For n=8 to 20 (step 2), 20 trials per point, we compute the mean and standard deviation of the quality ratio (greedy count / optimal count).
 
 ### Key Findings
 - **EFT**: Always achieves ratio 1.0 across all α and n, confirming optimality. This aligns with proof by contradiction: assuming an optimal solution has more jobs leads to a contradiction by showing the greedy algorithm's early finish leaves room for additional jobs.
@@ -39,7 +39,7 @@ These results validate that SD has counterexamples (high-overlap case shows fail
 **Coding Question Addressed**: Empirically validate Big-O complexities for greedy (O(n log n)) and exhaustive (O(n 2^n)) across α, with normalization to confirm bounds.
 
 ### 3.1 Greedy Runtime (EFT as Representative)
-Experiments: n=1024 to ~500k, 10 trials. Measures total time (sorting + selection).
+Experiments: n=1024 to ~500k, 10 trials. For each configuration we measure total time (sorting + selection) and compute both the mean and standard deviation across trials.
 
 - **Findings**:
   - Runtime scales as O(n log n): Log-log plot shows near-linear slope (slope ≈1 for n log n).
@@ -59,7 +59,7 @@ Experiments: n=1024 to ~500k, 10 trials. Measures total time (sorting + selectio
 | 524288 | 3514.74   | 3.53                  |
 
 ### 3.2 Exhaustive Runtime
-Experiments: n=10-20, 5 trials.
+Experiments: n=10-20, 5 trials. For each configuration we record the mean and standard deviation of the exhaustive solver's runtime.
 
 - **Findings**:
   - Runtime O(n 2^n): vs n plot shows exponential growth (up to ~4s at n=20 for high overlap).
@@ -88,4 +88,3 @@ Experiments: n=10-20, 5 trials.
 ## 5. Conclusion
 The implementation confirms EFT's optimality and O(n log n) efficiency, while heuristics approximate variably based on overlap. Exhaustive validates optimality but highlights exponential impracticality. This empirical study complements theory, demonstrating criteria like correctness, efficiency, and simplicity.
 
-All plots saved in 'plots/' (quality_comparison.png, greedy_big_o.png, exhaustive_big_o.png). Code runs via `python main.py`.
